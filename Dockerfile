@@ -35,4 +35,4 @@ EXPOSE 5001
 
 # Run migrations and start the server
 # Note: In production, you might want to run 'npx prisma migrate deploy'
-CMD ["sh", "-c", "npx prisma migrate dev --name init && node dist/index.js"]
+CMD ["sh", "-c", "npx prisma generate && npx prisma db push && node dist/index.js"]
