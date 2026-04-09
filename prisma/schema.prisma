@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String             @id @default(cuid())
+  name              String?
+  email             String?            @unique
+  password          String?
+  emailVerified     DateTime?
+  image             String?
+  role              String             @default("DEVELOPER")
+  bio               String?
+  title             String?
+  phone             String?
+  skills            String?
+  githubUrl         String?
+  rating            Float              @default(0.0)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  jobs              Job[]              @relation("ClientJobs")
+  receivedMessages  Message[]          @relation("ReceivedMessages")
+  sentMessages      Message[]          @relation("SentMessages")
+  portfolioProjects PortfolioProject[]
+  proposals         Proposal[]         @relation("DeveloperProposals")
+}
+
+model Job {
+  id           String     @id @default(cuid())
+  title        String
+  description  String
+  budget       Float
+  technologies String
+  clientId     String
+  status       String     @default("OPEN")
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  client       User       @relation("ClientJobs", fields: [clientId], references: [id])
+  messages     Message[]
+  proposals    Proposal[]
+}
+
+model Proposal {
+  id          String   @id @default(cuid())
+  description String
+  budget      Float
+  developerId String
+  jobId       String
+  status      String   @default("PENDING")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  job         Job      @relation(fields: [jobId], references: [id])
+  developer   User     @relation("DeveloperProposals", fields: [developerId], references: [id])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  text       String
+  senderId   String
+  receiverId String
+  jobId      String?
+  createdAt  DateTime @default(now())
+  job        Job?     @relation(fields: [jobId], references: [id])
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+}
+
+model PortfolioProject {
+  id          String   @id @default(cuid())
+  title       String
+  category    String   @default("Full-stack")
+  description String
+  liveLink    String?
+  repoLink    String?
+  image       String?
+  gallery     String?
+  tags        String?
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id])
+}
