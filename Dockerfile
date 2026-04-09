@@ -16,4 +16,4 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 EXPOSE 5001
-CMD ["node", "dist/index.js"]
+CMD ["sh", "-c", "npx prisma generate && npx prisma db push && node dist/index.js"]
