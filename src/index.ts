@@ -27,11 +27,13 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 const PORT = process.env.PORT || 5001;
-const ORIGIN = process.env.ORIGIN || 'http://localhost:3000';
+const ORIGIN = process.env.ORIGIN || 'https://zahabakmina.red-gate.tech';
 
 app.use(cors({
   origin: ORIGIN,
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json({ limit: '10kb' }));
 
